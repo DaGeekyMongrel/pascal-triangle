@@ -1,0 +1,23 @@
+{
+  "name": "pascal-triangle",
+  "version": "1.0.0",
+  "description": "Print Pascal's triangle to stdout or a text file",
+  "main": "pascal.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DaGeekyMongrel/pascal-triangle.git"
+  },
+  "keywords": [
+    "Pascal's",
+    "triangle"
+  ],
+  "author": "DaGeekyMongrel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DaGeekyMongrel/pascal-triangle/issues"
+  },
+  "homepage": "https://github.com/DaGeekyMongrel/pascal-triangle#readme"
+}
