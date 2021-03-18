@@ -4,7 +4,7 @@
   "description": "Print Pascal's triangle to stdout or a text file",
   "main": "pascal.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node pascal.js"
   },
   "repository": {
     "type": "git",
