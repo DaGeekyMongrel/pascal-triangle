@@ -1,8 +1,21 @@
 const fs = require("fs");
 const { Readable } = require("stream");
 
-const filename = "./pascals-triangle.txt";
-const fileStream = fs.createWriteStream(filename);
+const argRegex = /^--(?<name>\w+)=(?<val>\w+.?\w+)/;
+const args = process.argv.slice(2).reduce((acc, curr) => {
+  const currentArg = curr.match(argRegex)?.groups;
+  if (currentArg) {
+    acc[currentArg.name] = currentArg.val;
+    return acc;
+  }
+}, {});
+
+let outStream;
+if (args?.file) {
+  outStream = fs.createWriteStream(args.file);
+} else {
+  outStream = process.stdout;
+}
 
 async function* generatePascalsTriangle(rows) {
   const ptriangle = [];
@@ -18,8 +31,8 @@ async function* generatePascalsTriangle(rows) {
   }
 }
 
-const triangleStream = Readable.from(generatePascalsTriangle(10));
+const triangleStream = Readable.from(generatePascalsTriangle(args?.rows || 10));
 
 triangleStream.on("data", function (chunk) {
-  fileStream.write(chunk + "\n");
+  outStream.write(chunk + "\n");
 });
