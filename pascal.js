@@ -1,5 +1,7 @@
 const fs = require("fs");
-const { Readable } = require("stream");
+const { performance } = require("perf_hooks");
+const { Transform } = require("stream");
+const PascalsTriangle = require("./pascals-triangle");
 
 const argRegex = /^--(?<name>\w+)=(?<val>\w+.?\w+)/;
 const args = process.argv.slice(2).reduce((acc, curr) => {
@@ -17,22 +19,18 @@ if (args?.file) {
   outStream = process.stdout;
 }
 
-async function* generatePascalsTriangle(rows) {
-  const ptriangle = [];
+const triangleStream = PascalsTriangle.createStream(args?.rows);
 
-  for (let row = 0; row < rows; row++) {
-    ptriangle[row] = [1];
-    ptriangle[row][row] = 1;
-    for (let col = 1; col < row; col++) {
-      ptriangle[row][col] =
-        ptriangle[row - 1][col - 1] + ptriangle[row - 1][col];
-    }
-    yield ptriangle[row].join(" ") + "\n";
-  }
-}
-
-const triangleStream = Readable.from(generatePascalsTriangle(args?.rows || 10));
-
-triangleStream.on("data", function (chunk) {
-  outStream.write(chunk + "\n");
+const formatStream = new Transform({
+  transform: (data, encoding, callback) => {
+    callback(null, JSON.parse(data).join(" ") + "\n");
+  },
 });
+
+const startTime = performance.now();
+triangleStream
+  .pipe(formatStream)
+  .pipe(outStream)
+  .on("finish", () => {
+    console.log(`Finished in ${performance.now() - startTime} ms`);
+  });
