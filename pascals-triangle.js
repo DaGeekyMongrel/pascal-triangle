@@ -17,8 +17,9 @@ async function* generateSimple(rows) {
 async function* generate(numberOfRows) {
   for (let rowCount = 0; rowCount < numberOfRows; rowCount++) {
     const row = [1];
-    for (let i = 1; i <= rowCount; i++) row[i] = binomialCoeff(rowCount, i);
-    yield JSON.stringify(row);
+    row[rowCount] = 1;
+    for (let i = 1; i < rowCount; i++) row[i] = binomialCoeff(rowCount, i);
+    yield row;
   }
 }
 
@@ -35,7 +36,7 @@ function binomialCoeff(n, k) {
 }
 
 module.exports = {
-  createStream: (rowCount = 10) => Readable.from(generate(rowCount)),
+  createStream: (rowCount = 10) => Readable.from(generate(rowCount)), // Object mode is default
   generate,
   generateSimple,
 };
