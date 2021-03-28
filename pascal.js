@@ -1,7 +1,7 @@
 const fs = require("fs");
 const { performance } = require("perf_hooks");
-const { Transform, pipeline } = require("stream");
-const PascalsTriangle = require("./pascals-triangle");
+const { pipeline } = require("stream");
+const PascalsTriangleStream = require("./PascalsTriangleStream");
 
 const argRegex = /^--(?<name>\w+)=(?<val>\w+.?\w+)/;
 const args = process.argv.slice(2).reduce((acc, curr) => {
@@ -19,14 +19,13 @@ if (args?.file) {
   outStream = process.stdout;
 }
 
-const triangleStream = PascalsTriangle.createStream(args?.rows);
+const triangleStream = new PascalsTriangleStream(args?.rows);
 
-const formatStream = new Transform({
-  writableObjectMode: true,
-  transform: (data, encoding, callback) => {
-    callback(null, data.join(" ") + "\n");
-  },
-});
+async function* formatStream(source) {
+  for await (let chunk of source) {
+    yield chunk.join(" ") + "\n";
+  }
+}
 
 const startTime = performance.now();
 
